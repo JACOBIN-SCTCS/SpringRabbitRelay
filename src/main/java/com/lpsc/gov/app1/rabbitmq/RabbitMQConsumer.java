@@ -1,3 +1,4 @@
+
 package com.lpsc.gov.app1.rabbitmq;
 
 import java.nio.charset.StandardCharsets;
@@ -160,11 +161,15 @@ public class RabbitMQConsumer {
                     ? headers.get("messageType").toString()
                     : null;
 
+            ObjectMapper mapper = new ObjectMapper();
+            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             if (messageType != null) {
                 if (messageType.equals(GlobalVariables.RPCPayload)) {
-                    ;
+                    RPCPayload payload = mapper.readValue(message, RPCPayload.class);
+                    executionResult(payload);
                 } else if (messageType.equals(GlobalVariables.RPCResult)) {
-                    ;
+                    RPCResult payload = mapper.readValue(message, RPCResult.class);
+                    processAcknowledgement(payload);
                 }
             }
 
