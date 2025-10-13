@@ -17,11 +17,9 @@ import jakarta.annotation.PreDestroy;
 
 @Configuration
 public class RabbitMQConfig {
-    
-    public static String PRODUCER_QUEUE = "PRODUCER_QUEUE";
-    public static String PRODUCER_REPLY_QUEUE = "PRODUCER_QUEUE";
-    public static String CONSUMER_REQUEST_QUEUE = "PRODUCER_QUEUE";
-    public static String CONSUMER_REPLY_QUEUE = "PRODUCER_QUEUE";
+
+    public static String INBOX_QUEUE = "INBOX";
+    public static String OUTBOX_QUEUE = "OUTBOX";
 
     private Connection rabbitConnection;
     private Channel messagingChannel;
@@ -32,23 +30,17 @@ public class RabbitMQConfig {
     @PostConstruct
     public void setUpQueues() {
         String networkType = env.getProperty("server.networktype");
-        if(networkType.equals("INTRANET")) {
-            PRODUCER_QUEUE = "INTRA_OUTBOX";
-            CONSUMER_REQUEST_QUEUE = "INTER_OUTBOX";
-            CONSUMER_REPLY_QUEUE = "INTRA_INBOX";
-            PRODUCER_REPLY_QUEUE = "INTER_INBOX";
+        if (networkType.equals("INTRANET")) {
+            INBOX_QUEUE = "INTRA_INBOX";
+            OUTBOX_QUEUE = "INTRA_OUTBOX";
+        } else if (networkType.equals("INTERNET")) {
+            INBOX_QUEUE = "INTER_INBOX";
+            OUTBOX_QUEUE = "INTER_OUTBOX";
         }
-        else if(networkType.equals("INTERNET")) {
-            PRODUCER_QUEUE = "INTER_OUTBOX";
-            CONSUMER_REQUEST_QUEUE = "INTRA_OUTBOX";
-            CONSUMER_REPLY_QUEUE = "INTER_INBOX";
-            PRODUCER_REPLY_QUEUE = "INTRA_INBOX";
-        }
-
     }
 
     @Bean(name = "rabbitMQChannel")
-    public Channel getRabbitMQConnection(){
+    public Channel getRabbitMQConnection() {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("localhost");
         connectionFactory.setUsername("guest");
@@ -57,10 +49,9 @@ public class RabbitMQConfig {
         try {
             rabbitConnection = connectionFactory.newConnection();
             messagingChannel = rabbitConnection.createChannel();
-            messagingChannel.queueDeclare(PRODUCER_QUEUE, false, false, false, null);
-            messagingChannel.queueDeclare(CONSUMER_REQUEST_QUEUE, false, false, false, null);
-            messagingChannel.queueDeclare(CONSUMER_REPLY_QUEUE, false, false, false, null);
-            //messagingChannel.queueDeclare(, false, false, false, null)
+
+            messagingChannel.queueDeclare(INBOX_QUEUE, false, false, false, null);
+            messagingChannel.queueDeclare(OUTBOX_QUEUE, false, false, false, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,17 +60,17 @@ public class RabbitMQConfig {
 
     @PreDestroy
     public void configDestroy() {
-        
+
         try {
-            if(messagingChannel != null)
+            if (messagingChannel != null)
                 messagingChannel.close();
-            if(rabbitConnection != null)
+            if (rabbitConnection != null)
                 rabbitConnection.close();
         } catch (Exception e) {
-            
+
             e.printStackTrace();
-        } 
-        
+        }
+
     }
 
 

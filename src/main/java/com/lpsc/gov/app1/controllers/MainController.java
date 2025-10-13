@@ -15,31 +15,33 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.generics.RPCPayload;
 import com.lpsc.gov.app1.pojo.RPCCalls;
 import com.lpsc.gov.app1.pojo.TestTable;
 import com.lpsc.gov.app1.rabbitmq.RabbitMQConfig;
 import com.lpsc.gov.app1.services.RPCServiceI;
 import com.lpsc.gov.app1.services.TestTableServiceI;
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 
 @RestController
 public class MainController {
-    
-	@Autowired
-	private TestTableServiceI testTableService;
 
-	@Autowired
-	private RPCServiceI rpcService;
+    @Autowired
+    private TestTableServiceI testTableService;
 
-	@Autowired
-	@Qualifier("rabbitMQChannel")
-	private Channel rabbitMQChannel;
+    @Autowired
+    private RPCServiceI rpcService;
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    @Qualifier("rabbitMQChannel")
+    private Channel rabbitMQChannel;
 
-	private String getSaltString() {
+    @Autowired
+    private Environment env;
+
+    private String getSaltString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
         Random rnd = new Random();
@@ -53,74 +55,82 @@ public class MainController {
     }
 
 
-	@GetMapping("/")
-	public String index() {
-		return "Greetings from Spring Boot!";
-	}
+    @GetMapping("/")
+    public String index() {
+        return "Greetings from Spring Boot!";
+    }
 
-	@GetMapping("/allrecords") 
-	public List<TestTable> allRecords()
-	{
-		System.out.println(env.getProperty("server.networktype"));
-		return testTableService.getTables();
-	}
+    @GetMapping("/allrecords")
+    public List<TestTable> allRecords() {
+        System.out.println(env.getProperty("server.networktype"));
+        return testTableService.getTables();
+    }
 
-	@GetMapping("/populaterandom")
-	public String populateRandom() {
-		String randomString = getSaltString();
-		TestTable table = new TestTable();
-		table.setName(randomString);
-		table.setCode("LB12345");
+    @GetMapping("/populaterandom")
+    public String populateRandom() {
+        String randomString = getSaltString();
+        TestTable table = new TestTable();
+        table.setName(randomString);
+        table.setCode("LB12345");
 
-		testTableService.saveTable(table);
-		return "Saved successfully";
-	}
+        testTableService.saveTable(table);
+        return "Saved successfully";
+    }
 
-	@GetMapping("/updateRandom")
-	public String updateRandom() {
-		
-		TestTable tableEntry = testTableService.getTestById(1);
-		//System.out.println("Random Entry name = " + tableEntry.getName());
-		tableEntry.setName(getSaltString());
+    @GetMapping("/updateRandom")
+    public String updateRandom() {
 
-		
-		//RPCCalls rpcall = rpcService.addNewCall("TestTableServiceI", "saveTable", ))
-		Map<String,Object> params = new HashMap<>();
-		Hibernate.initialize(tableEntry);
-		params.put("table", tableEntry);
+        TestTable tableEntry = testTableService.getTestById(1);
+        // System.out.println("Random Entry name = " + tableEntry.getName());
+        tableEntry.setName(getSaltString());
+        testTableService.saveTable(tableEntry);
 
-		RPCPayload rpcPayload = new RPCPayload();
-		rpcPayload.setServiceName("TestTableServiceI");
-		rpcPayload.setMethodName("saveTable");
-		rpcPayload.setParams(params);
-	
-		RPCCalls rpcCall = rpcService.addNewCall(rpcPayload.getServiceName(), rpcPayload.getMethodName(), rpcPayload.getParams().toString());
-		long rpcId = rpcCall.getRpcid();
-		rpcPayload.setRequestId(rpcId);
 
-		
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			String message = mapper.writeValueAsString(rpcPayload);
-			rabbitMQChannel.basicPublish("", RabbitMQConfig.PRODUCER_QUEUE, null, message.getBytes());
+        // RPCCalls rpcall = rpcService.addNewCall("TestTableServiceI", "saveTable", ))
+        Map<String, Object> params = new HashMap<>();
+        Hibernate.initialize(tableEntry);
+        params.put("table", tableEntry);
 
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		//rpcService.addNewCall();
-		return "Updated Value successfully";
-	}
+        RPCPayload rpcPayload = new RPCPayload();
+        rpcPayload.setServiceName("TestTableServiceI");
+        rpcPayload.setMethodName("saveTable");
+        rpcPayload.setParams(params);
 
-	@GetMapping("/testmq") 
-	public String testMQ(){
-		try {
-			rabbitMQChannel.basicPublish("", RabbitMQConfig.PRODUCER_QUEUE, null, "Sample message from rabbitMQ".getBytes());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "Pushed task to queue";
-	}
-	
+        RPCCalls rpcCall = rpcService.addNewCall(rpcPayload.getServiceName(),
+                rpcPayload.getMethodName(), rpcPayload.getParams().toString());
+        long rpcId = rpcCall.getRpcid();
+        rpcPayload.setRequestId(rpcId);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String message = mapper.writeValueAsString(rpcPayload);
+            Map<String, Object> headers = new HashMap<>();
+            headers.put("messageType", GlobalVariables.RPCPayload);
+
+            AMQP.BasicProperties props =
+                    new AMQP.BasicProperties.Builder().headers(headers).build();
+
+            rabbitMQChannel.basicPublish("", RabbitMQConfig.OUTBOX_QUEUE, props,
+                    message.getBytes());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // rpcService.addNewCall();
+        return "Updated Value successfully";
+    }
+
+    @GetMapping("/testmq")
+    public String testMQ() {
+        try {
+            rabbitMQChannel.basicPublish("", RabbitMQConfig.OUTBOX_QUEUE, null,
+                    "Sample message from rabbitMQ".getBytes());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return "Pushed task to queue";
+    }
+
 }
