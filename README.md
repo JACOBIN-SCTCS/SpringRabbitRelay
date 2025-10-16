@@ -23,6 +23,9 @@ gets migrated to the other zone via RabbitMQ.
 
 -----
 
-Branch : architecture2 contains the code in which inbox and outbox queues are maintained for each zone. The rabbitmq intermediary is responsbile for reading values from queues and applying updates
+Branch : architecture2 contains the code in which inbox and outbox queues are maintained for each zone. The rabbitmq intermediary is responsbile for reading values from queues and applying updates. Diagram followed for architecture2
+
+![architecture2](ZoneMigration.png)
+
 
 
