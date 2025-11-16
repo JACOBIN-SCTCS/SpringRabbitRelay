@@ -20,6 +20,7 @@ import com.lpsc.gov.app1.generics.RPCPayload;
 import com.lpsc.gov.app1.pojo.RPCCalls;
 import com.lpsc.gov.app1.pojo.TestTable;
 import com.lpsc.gov.app1.rabbitmq.RabbitMQConfig;
+import com.lpsc.gov.app1.rabbitmq.RabbitMQProducer;
 import com.lpsc.gov.app1.services.RPCServiceI;
 import com.lpsc.gov.app1.services.TestTableServiceI;
 import com.rabbitmq.client.AMQP;
@@ -41,6 +42,9 @@ public class MainController {
     @Autowired
     private Environment env;
 
+    @Autowired
+    private RabbitMQProducer rabbitMQProducer;
+
     private String getSaltString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
@@ -53,7 +57,6 @@ public class MainController {
         return saltStr;
 
     }
-
 
     @GetMapping("/")
     public String index() {
@@ -85,40 +88,14 @@ public class MainController {
         tableEntry.setName(getSaltString());
         testTableService.saveTable(tableEntry);
 
-
         // RPCCalls rpcall = rpcService.addNewCall("TestTableServiceI", "saveTable", ))
         Map<String, Object> params = new HashMap<>();
         Hibernate.initialize(tableEntry);
         params.put("table", tableEntry);
 
-        RPCPayload rpcPayload = new RPCPayload();
-        rpcPayload.setServiceName("TestTableServiceI");
-        rpcPayload.setMethodName("saveTable");
-        rpcPayload.setParams(params);
+        rabbitMQProducer.sendRPCPayload("TestTableServiceI", "saveTable", params);
+        return "Updated Successfully";
 
-        RPCCalls rpcCall = rpcService.addNewCall(rpcPayload.getServiceName(),
-                rpcPayload.getMethodName(), rpcPayload.getParams().toString());
-        long rpcId = rpcCall.getRpcid();
-        rpcPayload.setRequestId(rpcId);
-
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            String message = mapper.writeValueAsString(rpcPayload);
-            Map<String, Object> headers = new HashMap<>();
-            headers.put("messageType", GlobalVariables.RPCPayload);
-
-            AMQP.BasicProperties props =
-                    new AMQP.BasicProperties.Builder().headers(headers).build();
-
-            rabbitMQChannel.basicPublish("", RabbitMQConfig.OUTBOX_QUEUE, props,
-                    message.getBytes());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // rpcService.addNewCall();
-        return "Updated Value successfully";
     }
 
     @GetMapping("/testmq")
