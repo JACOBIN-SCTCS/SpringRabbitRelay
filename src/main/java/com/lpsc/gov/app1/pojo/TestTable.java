@@ -22,7 +22,7 @@ public class TestTable {
     // @GeneratedValue(strategy = GenerationType.AUTO)
     @GeneratedValue(generator = "testtable-generator")
     @GenericGenerator(name = "testtable-generator", strategy = "com.lpsc.gov.app1.generators.CustomIdGenerator")
-    private long id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -39,7 +39,7 @@ public class TestTable {
         this.code = code;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

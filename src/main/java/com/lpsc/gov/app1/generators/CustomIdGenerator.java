@@ -16,7 +16,7 @@ public class CustomIdGenerator implements IdentifierGenerator {
 
         String queryString = "select %s from %s";
         String networkzone = System.getProperty("networkzone");
-
+        
         if (networkzone.equals(GlobalVariables.INTRANET)) {
             queryString = "select max(%s) from %s";
         } else if (networkzone.equals(GlobalVariables.INTERNET)) {

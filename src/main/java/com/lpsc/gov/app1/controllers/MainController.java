@@ -77,6 +77,12 @@ public class MainController {
         table.setCode("LB12345");
 
         testTableService.saveTable(table);
+
+        //Map<String, Object> params = new HashMap<>();
+        //Hibernate.initialize(table);
+        //params.put("table", table);
+        //rabbitMQProducer.sendRPCPayload("TestTableServiceI", "saveTable", params);
+
         return "Saved successfully";
     }
 

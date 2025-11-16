@@ -43,6 +43,25 @@ public class RabbitMQConsumer {
     @Qualifier("rabbitMQChannel")
     private Channel rabbitMQChannel;
 
+
+    private void sendRPCResult(long requestId, long rabbitMqId, boolean result) {
+        RPCResult rpcResult = new RPCResult(requestId, rabbitMqId, (result == true) ? 1 : 0);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String message = mapper.writeValueAsString(rpcResult);
+            HashMap<String, Object> headers = new HashMap<>();
+            headers.put("messageType", GlobalVariables.RPCResult);
+            AMQP.BasicProperties props =
+                    new AMQP.BasicProperties.Builder().headers(headers).build();
+
+            rabbitMQChannel.basicPublish("", RabbitMQConfig.OUTBOX_QUEUE, props,
+                    message.getBytes());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+    }
+
     private boolean executionResult(RPCPayload payload) {
 
         String serviceName = payload.getServiceName();
@@ -62,28 +81,7 @@ public class RabbitMQConsumer {
                             TestTable r = testtableService.saveTable(table);
                             if (r != null)
                                 result = true;
-
-                            RPCResult rpcResult = new RPCResult(payload.getRequestId(),
-                                    payload.getRabbitmqid(), (result == true) ? 1 : 0);
-
-                            try {
-                                String message = mapper.writeValueAsString(rpcResult);
-                                HashMap<String, Object> headers = new HashMap<>();
-                                headers.put("messageType", GlobalVariables.RPCResult);
-                                // AMQBasicProperties props =
-                                // new AMQP.BasicProperties.Builder().headers(headers).build();
-
-                                AMQP.BasicProperties props =
-                                        new AMQP.BasicProperties.Builder().headers(headers).build();
-
-
-
-                                rabbitMQChannel.basicPublish("", RabbitMQConfig.OUTBOX_QUEUE, props,
-                                        message.getBytes());
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            sendRPCResult(payload.getRequestId(),  payload.getRabbitmqid(), result);
                         }
                         // table.setName(table.getName() + "-INSIDE CONSUMER ");
                         break;
@@ -107,13 +105,7 @@ public class RabbitMQConsumer {
         boolean res = false;
         try {
             RPCCalls rpccall = rpcService.getRPCCallById(r.getRequestId());
-            // Hibernate.initialize(rpccall);
-            // System.out.println(null);
-            // System.out.println(r.getRequestId() + " -- " + r.getResult());
-            // Hibernate.initialize(rpccall.getResult());
-            // rpccall.getResult();
             rpccall.setResult(r.getResult());
-            // rpccall.setResultDate(new java.sql.Timestamp(System.currentTimeMillis()));
             rpcService.updateCall(rpccall);
             res = true;
         } catch (Exception e) {
@@ -125,35 +117,7 @@ public class RabbitMQConsumer {
 
     @PostConstruct
     public void processMessages() {
-        /*
-         * DeliverCallback deliveryCallBackRequests = (consumerTag, delivery) -> { String message =
-         * new String(delivery.getBody(), StandardCharsets.UTF_8);
-         * System.out.println(" [x] Received Request to execute Procedure '" + message + "'");
-         * 
-         * ObjectMapper mapper = new ObjectMapper(); RPCPayload payload = mapper.readValue(message,
-         * RPCPayload.class); boolean result = executionResult(payload);
-         * 
-         * System.out.
-         * println("****************************\n Message was processed successfully \n **************************"
-         * );
-         * 
-         * };
-         * 
-         * DeliverCallback deliveryCallBackResults = (consumerTag, delivery) -> { String message =
-         * new String(delivery.getBody(), StandardCharsets.UTF_8);
-         * System.out.println(" [x] Received Result message '" + message + "'");
-         * 
-         * ObjectMapper mapper = new ObjectMapper(); RPCResult resultPayload =
-         * mapper.readValue(message, RPCResult.class); boolean result =
-         * processAcknowledgement(resultPayload);
-         * 
-         * System.out.
-         * println("****************************\n Results Callback  was processed successfully; Request = "
-         * + resultPayload.getRequestId() + " Result = " + resultPayload.getResult() +
-         * " \n **************************");
-         * 
-         * };
-         */
+        
 
         DeliverCallback deliveryCallBack = (consumerTag, delivery) -> {
             Map<String, Object> headers = delivery.getProperties().getHeaders();
@@ -180,12 +144,6 @@ public class RabbitMQConsumer {
             rabbitMQChannel.basicConsume(RabbitMQConfig.INBOX_QUEUE, true, deliveryCallBack,
                     consumerTag -> {
                     });
-            /*
-             * rabbitMQChannel.basicConsume(RabbitMQConfig.CONSUMER_REQUEST_QUEUE, true,
-             * deliveryCallBackRequests, consumerTag -> { });
-             * rabbitMQChannel.basicConsume(RabbitMQConfig.CONSUMER_REPLY_QUEUE, true,
-             * deliveryCallBackResults, consumerTag -> { });
-             */
         } catch (Exception e) {
             e.printStackTrace();
         }
