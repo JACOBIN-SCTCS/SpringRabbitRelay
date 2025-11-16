@@ -8,20 +8,26 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 @Entity
 @Table(name = "testtable")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class TestTable {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    // @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "testtable-generator")
+    @GenericGenerator(name = "testtable-generator", strategy = "com.lpsc.gov.app1.generators.CustomIdGenerator")
     private long id;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
-    @Column(name="code")
+    @Column(name = "code")
     private String code;
 
     public TestTable() {
@@ -57,7 +63,5 @@ public class TestTable {
     public String toString() {
         return "TestTable [id=" + id + ", name=" + name + ", code=" + code + "]";
     }
-
-    
 
 }

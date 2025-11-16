@@ -37,6 +37,7 @@ public class RabbitMQConfig {
             INBOX_QUEUE = "INTER_INBOX";
             OUTBOX_QUEUE = "INTER_OUTBOX";
         }
+        System.setProperty("networkzone", networkType);
     }
 
     @Bean(name = "rabbitMQChannel")
@@ -72,6 +73,5 @@ public class RabbitMQConfig {
         }
 
     }
-
 
 }
