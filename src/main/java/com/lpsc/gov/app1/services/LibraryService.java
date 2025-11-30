@@ -19,4 +19,9 @@ public class LibraryService implements LibraryServiceI {
         return libraryRepo.save(library);
     }
 
+    @Override
+    public Library getLibraryById(long id) {
+        return libraryRepo.findById(id).get();
+    }
+
 }

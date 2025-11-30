@@ -4,4 +4,6 @@ import com.lpsc.gov.app1.pojo.Library;
 
 public interface LibraryServiceI {
     Library saveLibrary(Library library);
+
+    Library getLibraryById(long id);
 }
