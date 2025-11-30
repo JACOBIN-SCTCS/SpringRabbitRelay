@@ -2,7 +2,9 @@
 package com.lpsc.gov.app1.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,6 +13,7 @@ import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.pojo.Author;
 import com.lpsc.gov.app1.pojo.Books;
 import com.lpsc.gov.app1.pojo.Library;
+import com.lpsc.gov.app1.rabbitmq.RabbitMQProducer;
 import com.lpsc.gov.app1.services.AuthorService;
 import com.lpsc.gov.app1.services.BookService;
 import com.lpsc.gov.app1.services.LibraryService;
@@ -39,6 +42,9 @@ public class LibraryController {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private RabbitMQProducer rabbitMQProducer;
 
     private String getRandomString(int length) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
@@ -126,6 +132,28 @@ public class LibraryController {
         }
         return jsonString;
 
+    }
+
+    @RequestMapping(value = "/migrateLibrary", method = RequestMethod.GET)
+    public String migrateLibrary(@RequestParam(name = "id") int id) {
+
+        ObjectMapper mapper = new ObjectMapper();
+        Library library = libraryService.getLibraryById(id);
+
+        Hibernate.initialize(library);
+
+        String jsonString = "";
+        try {
+            jsonString = mapper.writeValueAsString(library);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("library", jsonString);
+
+        rabbitMQProducer.sendRPCPayload("LibraryService", "saveLibrary", params);
+        return "Migration to library successfully called";
     }
 
 }

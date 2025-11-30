@@ -1,37 +1,30 @@
 package com.lpsc.gov.app1.pojo;
 
 import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.Time;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "rpccalls")
-public class RPCCalls {
+public class RPCLogs {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(name = "rpcid")
     private long rpcid;
 
     @Column(name = "instancename")
-    private String instancename;
+    private String instance;
 
-    @Column(name = "servicename")
-    private String serviceName;
-
-    @Column(name = "methodname")
+    @Column(name = "methodName")
     private String methodName;
 
-    @Column(name = "rabbitmqid")
-    private long rabbitmqid;
-
-    @Column(name = "payload", columnDefinition = "TEXT")
+    @Column(name = "payload")
     private String payload;
 
     @Column(name = "result")
@@ -40,8 +33,16 @@ public class RPCCalls {
     @Column(name = "createdDate")
     private Timestamp createdDate = new Timestamp(System.currentTimeMillis());
 
-    @Column(name = "resultDate")
-    private Timestamp resultDate;
+    @Column(name = "active")
+    private int active;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public long getRpcid() {
         return rpcid;
@@ -51,12 +52,12 @@ public class RPCCalls {
         this.rpcid = rpcid;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public String getInstance() {
+        return instance;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setInstance(String instance) {
+        this.instance = instance;
     }
 
     public String getMethodName() {
@@ -65,14 +66,6 @@ public class RPCCalls {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
-    }
-
-    public long getRabbitmqid() {
-        return rabbitmqid;
-    }
-
-    public void setRabbitmqid(long rabbitmqid) {
-        this.rabbitmqid = rabbitmqid;
     }
 
     public String getPayload() {
@@ -99,20 +92,12 @@ public class RPCCalls {
         this.createdDate = createdDate;
     }
 
-    public Timestamp getResultDate() {
-        return resultDate;
+    public int getActive() {
+        return active;
     }
 
-    public void setResultDate(Timestamp resultDate) {
-        this.resultDate = resultDate;
-    }
-
-    public String getInstancename() {
-        return instancename;
-    }
-
-    public void setInstancename(String instancename) {
-        this.instancename = instancename;
+    public void setActive(int active) {
+        this.active = active;
     }
 
 }

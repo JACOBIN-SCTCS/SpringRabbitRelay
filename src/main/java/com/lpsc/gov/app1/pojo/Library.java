@@ -12,12 +12,14 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import org.springframework.data.domain.Persistable;
+
 @Entity
 @Table(name = "library_")
-public class Library {
+public class Library implements Persistable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
 
     @Column(name = "libraryname")
     private String libraryName;
@@ -31,11 +33,11 @@ public class Library {
     @ManyToMany
     private List<Books> books;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -69,6 +71,12 @@ public class Library {
 
     public void setBooks(List<Books> books) {
         this.books = books;
+    }
+
+    @Override
+    public boolean isNew() {
+
+        return (id == null) || (id.longValue() >= 0);
     }
 
 }

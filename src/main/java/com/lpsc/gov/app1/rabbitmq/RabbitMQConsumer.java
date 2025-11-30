@@ -19,8 +19,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.generics.RPCPayload;
 import com.lpsc.gov.app1.generics.RPCResult;
+import com.lpsc.gov.app1.pojo.Library;
 import com.lpsc.gov.app1.pojo.RPCCalls;
 import com.lpsc.gov.app1.pojo.TestTable;
+import com.lpsc.gov.app1.services.LibraryService;
+import com.lpsc.gov.app1.services.LibraryServiceI;
 import com.lpsc.gov.app1.services.RPCServiceI;
 import com.lpsc.gov.app1.services.TestTableServiceI;
 import com.rabbitmq.client.AMQP;
@@ -38,11 +41,12 @@ public class RabbitMQConsumer {
     @Autowired
     private RPCServiceI rpcService;
 
+    @Autowired
+    private LibraryServiceI libraryService;
 
     @Autowired
     @Qualifier("rabbitMQChannel")
     private Channel rabbitMQChannel;
-
 
     private void sendRPCResult(long requestId, long rabbitMqId, boolean result) {
         RPCResult rpcResult = new RPCResult(requestId, rabbitMqId, (result == true) ? 1 : 0);
@@ -51,15 +55,14 @@ public class RabbitMQConsumer {
             String message = mapper.writeValueAsString(rpcResult);
             HashMap<String, Object> headers = new HashMap<>();
             headers.put("messageType", GlobalVariables.RPCResult);
-            AMQP.BasicProperties props =
-                    new AMQP.BasicProperties.Builder().headers(headers).build();
+            AMQP.BasicProperties props = new AMQP.BasicProperties.Builder().headers(headers).build();
 
             rabbitMQChannel.basicPublish("", RabbitMQConfig.OUTBOX_QUEUE, props,
                     message.getBytes());
 
         } catch (Exception e) {
             e.printStackTrace();
-        } 
+        }
     }
 
     private boolean executionResult(RPCPayload payload) {
@@ -81,7 +84,7 @@ public class RabbitMQConsumer {
                             TestTable r = testtableService.saveTable(table);
                             if (r != null)
                                 result = true;
-                            sendRPCResult(payload.getRequestId(),  payload.getRabbitmqid(), result);
+                            sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
                         }
                         // table.setName(table.getName() + "-INSIDE CONSUMER ");
                         break;
@@ -90,16 +93,29 @@ public class RabbitMQConsumer {
                         break;
                 }
                 break;
+            case "LibraryService":
+                switch (methodName) {
+                    case "saveLibrary":
+                        System.out.println("Save function called");
+                        Library library = mapper.convertValue(params.get("table"), Library.class);
 
+                        if (library != null) {
+                            Library l = libraryService.saveLibrary(library);
+                            if (l != null)
+                                result = true;
+                            sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
+                        }
+                        break;
+                    default:
+                        break;
+                }
 
             default:
                 break;
         }
 
-
         return result;
     }
-
 
     private boolean processAcknowledgement(RPCResult r) {
         boolean res = false;
@@ -114,10 +130,8 @@ public class RabbitMQConsumer {
         return res;
     }
 
-
     @PostConstruct
     public void processMessages() {
-        
 
         DeliverCallback deliveryCallBack = (consumerTag, delivery) -> {
             Map<String, Object> headers = delivery.getProperties().getHeaders();
@@ -149,6 +163,5 @@ public class RabbitMQConsumer {
         }
 
     }
-
 
 }
