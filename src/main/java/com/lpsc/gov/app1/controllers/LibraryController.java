@@ -9,6 +9,7 @@ import java.util.Random;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lpsc.gov.app1.dto.DTOHelper;
 import com.lpsc.gov.app1.dto.LibraryDTO;
 import com.lpsc.gov.app1.dto.TransferDTO;
 import com.lpsc.gov.app1.generics.GlobalVariables;
@@ -224,7 +225,9 @@ public class LibraryController {
         }
 
         LibraryDTO dto = new LibraryDTO();
+
         testinginterfaces(dto);
+        TransferDTO transferDTO = DTOHelper.deserializeMessage(dto.convertToMessage());
 
         return resultString;
     }

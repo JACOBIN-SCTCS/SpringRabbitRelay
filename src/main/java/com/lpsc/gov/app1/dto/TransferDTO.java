@@ -1,7 +1,12 @@
 package com.lpsc.gov.app1.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.hibernate.Session;
+
 public abstract class TransferDTO {
 
+    @JsonProperty("dtotype")
     String dtoType;
 
     TransferDTO(String type) {
@@ -14,4 +19,7 @@ public abstract class TransferDTO {
 
     public abstract String convertToMessage();
 
+    public abstract String testmethod();
+
+    public abstract boolean saveData(Session session);
 }
