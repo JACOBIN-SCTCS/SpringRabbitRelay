@@ -21,9 +21,6 @@ public class RPCLogs {
     @Column(name = "instancename")
     private String instance;
 
-    @Column(name = "methodName")
-    private String methodName;
-
     @Column(name = "payload")
     private String payload;
 
@@ -58,14 +55,6 @@ public class RPCLogs {
 
     public void setInstance(String instance) {
         this.instance = instance;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
     }
 
     public String getPayload() {

@@ -25,8 +25,6 @@ public class RPCService implements RPCServiceI {
     @Override
     public RPCCalls addNewCall(String serviceName, String methodName, String payload) {
         RPCCalls rpcCall = new RPCCalls();
-        rpcCall.setMethodName(methodName);
-        rpcCall.setServiceName(serviceName);
         rpcCall.setPayload(payload);
         return rpcCallRepo.save(rpcCall);
     }

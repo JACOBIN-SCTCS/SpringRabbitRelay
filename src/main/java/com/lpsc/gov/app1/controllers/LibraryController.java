@@ -9,6 +9,8 @@ import java.util.Random;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lpsc.gov.app1.dto.LibraryDTO;
+import com.lpsc.gov.app1.dto.TransferDTO;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.pojo.Author;
 import com.lpsc.gov.app1.pojo.Books;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -154,6 +157,76 @@ public class LibraryController {
 
         rabbitMQProducer.sendRPCPayload("LibraryService", "saveLibrary", params);
         return "Migration to library successfully called";
+    }
+
+    private void testinginterfaces(TransferDTO transferDTO) {
+        System.out.println(transferDTO.convertToMessage());
+        System.out.println(transferDTO.getDTOType());
+    }
+
+    @RequestMapping(value = "/testlibendpoint", method = RequestMethod.GET)
+    public @ResponseBody String testEndpoint() {
+        ObjectMapper mapper = new ObjectMapper();
+        Author author = new Author();
+        author.setActive(1);
+        author.setName("James");
+        author.setId(3);
+
+        List<Books> books = new ArrayList<Books>();
+        Books book = new Books();
+        book.setBookName("Test Title");
+        book.setActive(1);
+        book.setId(1);
+        book.setAuthor(author);
+        book.setLibraries(null);
+        books.add(book);
+
+        Books book2 = new Books();
+        book2.setBookName("Test Title 2");
+        book2.setActive(1);
+        book2.setId(2);
+        book2.setAuthor(author);
+        book2.setLibraries(null);
+        books.add(book2);
+
+        Library library = new Library();
+        library.setActive(1);
+        library.setLibraryName("JRD Tata Library");
+        library.setId(1l);
+        library.setMigrationState(GlobalVariables.INTRANET_COMPLETED);
+
+        library.setBooks(books);
+
+        List<Library> libraries = new ArrayList<>();
+        libraries.add(library);
+
+        String resultString = "";
+        try {
+            resultString = mapper.writeValueAsString(library);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Library lib = libraryService.getLibraryById(1);
+        try {
+            resultString = mapper.writeValueAsString(lib);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Library libdeserialzied = null;
+        try {
+            libdeserialzied = mapper.readValue(resultString, Library.class);
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>" + libdeserialzied.getLibraryName());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        LibraryDTO dto = new LibraryDTO();
+        testinginterfaces(dto);
+
+        return resultString;
     }
 
 }

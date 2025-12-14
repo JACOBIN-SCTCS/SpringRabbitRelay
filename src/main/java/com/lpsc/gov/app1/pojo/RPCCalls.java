@@ -22,14 +22,11 @@ public class RPCCalls {
     @Column(name = "instancename")
     private String instancename;
 
-    @Column(name = "servicename")
-    private String serviceName;
-
-    @Column(name = "methodname")
-    private String methodName;
-
     @Column(name = "rabbitmqid")
     private long rabbitmqid;
+
+    @Column(name = "calltype")
+    private String calltype;
 
     @Column(name = "payload", columnDefinition = "TEXT")
     private String payload;
@@ -49,22 +46,6 @@ public class RPCCalls {
 
     public void setRpcid(long rpcid) {
         this.rpcid = rpcid;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
     }
 
     public long getRabbitmqid() {
@@ -113,6 +94,14 @@ public class RPCCalls {
 
     public void setInstancename(String instancename) {
         this.instancename = instancename;
+    }
+
+    public String getCalltype() {
+        return calltype;
+    }
+
+    public void setCalltype(String calltype) {
+        this.calltype = calltype;
     }
 
 }

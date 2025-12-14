@@ -18,7 +18,7 @@ import org.springframework.data.domain.Persistable;
 
 @Entity
 @Table(name = "library_")
-public class Library implements Persistable<Long> {
+public class Library {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -77,12 +77,6 @@ public class Library implements Persistable<Long> {
 
     public void setBooks(List<Books> books) {
         this.books = books;
-    }
-
-    @Override
-    public boolean isNew() {
-
-        return (id == null) || (id.longValue() >= 0);
     }
 
 }
