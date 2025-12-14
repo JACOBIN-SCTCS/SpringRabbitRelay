@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lpsc.gov.app1.dto.DTOHelper;
+import com.lpsc.gov.app1.dto.TransferDTO;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.generics.RPCPayload;
 import com.lpsc.gov.app1.generics.RPCResult;
@@ -36,13 +38,10 @@ import jakarta.annotation.PostConstruct;
 public class RabbitMQConsumer {
 
     @Autowired
-    private TestTableServiceI testtableService;
-
-    @Autowired
     private RPCServiceI rpcService;
 
     @Autowired
-    private LibraryServiceI libraryService;
+    private DTOHelper dtoHelper;
 
     @Autowired
     @Qualifier("rabbitMQChannel")
@@ -69,53 +68,9 @@ public class RabbitMQConsumer {
 
         boolean result = false;
 
-        /*
-         * String serviceName = payload.getServiceName();
-         * String methodName = payload.getMethodName();
-         * Map<String, Object> params = payload.getParams();
-         * 
-         * ObjectMapper mapper = new ObjectMapper();
-         * 
-         * switch (serviceName) {
-         * case "TestTableServiceI":
-         * switch (methodName) {
-         * case "saveTable":
-         * System.out.println(params.get("table").getClass().getName());
-         * TestTable table = mapper.convertValue(params.get("table"), TestTable.class);
-         * if (table != null) {
-         * TestTable r = testtableService.saveTable(table);
-         * if (r != null)
-         * result = true;
-         * sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
-         * }
-         * // table.setName(table.getName() + "-INSIDE CONSUMER ");
-         * break;
-         * 
-         * default:
-         * break;
-         * }
-         * break;
-         * case "LibraryService":
-         * switch (methodName) {
-         * case "saveLibrary":
-         * System.out.println("Save function called");
-         * Library library = mapper.convertValue(params.get("library"), Library.class);
-         * 
-         * if (library != null) {
-         * Library l = libraryService.saveLibrary(library);
-         * if (l != null)
-         * result = true;
-         * sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
-         * }
-         * break;
-         * default:
-         * break;
-         * }
-         * 
-         * default:
-         * break;
-         * }
-         */
+        result = dtoHelper.applyState(payload.getPayload());
+        sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
+
         return result;
     }
 
