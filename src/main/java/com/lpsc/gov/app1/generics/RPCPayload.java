@@ -3,28 +3,24 @@ package com.lpsc.gov.app1.generics;
 import java.util.Map;
 
 public class RPCPayload {
-    
+
     private long requestId;
 
-    private String serviceName;
-
-    private String methodName;
+    private String callType;
 
     private long rabbitmqid;
 
-    private Map<String,Object> params;
+    private String payload;
 
     public RPCPayload() {
         ;
     }
-    
-    public RPCPayload(long requestId, String serviceName, String methodName, long rabbitmqid,
-            Map<String, Object> params) {
+
+    public RPCPayload(long requestId, String callType, long rabbitmqid, String payload) {
         this.requestId = requestId;
-        this.serviceName = serviceName;
-        this.methodName = methodName;
+        this.callType = callType;
         this.rabbitmqid = rabbitmqid;
-        this.params = params;
+        this.payload = payload;
     }
 
     public long getRequestId() {
@@ -35,22 +31,6 @@ public class RPCPayload {
         this.requestId = requestId;
     }
 
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
     public long getRabbitmqid() {
         return rabbitmqid;
     }
@@ -59,17 +39,20 @@ public class RPCPayload {
         this.rabbitmqid = rabbitmqid;
     }
 
-    public Map<String, Object> getParams() {
-        return params;
+    public String getCallType() {
+        return callType;
     }
 
-    public void setParams(Map<String, Object> params) {
-        this.params = params;
+    public void setCallType(String callType) {
+        this.callType = callType;
     }
 
-    
+    public String getPayload() {
+        return payload;
+    }
 
-    
-
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
 
 }

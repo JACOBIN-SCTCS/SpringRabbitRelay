@@ -78,10 +78,10 @@ public class MainController {
 
         testTableService.saveTable(table);
 
-        //Map<String, Object> params = new HashMap<>();
-        //Hibernate.initialize(table);
-        //params.put("table", table);
-        //rabbitMQProducer.sendRPCPayload("TestTableServiceI", "saveTable", params);
+        // Map<String, Object> params = new HashMap<>();
+        // Hibernate.initialize(table);
+        // params.put("table", table);
+        // rabbitMQProducer.sendRPCPayload("TestTableServiceI", "saveTable", params);
 
         return "Saved successfully";
     }
@@ -99,7 +99,7 @@ public class MainController {
         Hibernate.initialize(tableEntry);
         params.put("table", tableEntry);
 
-        rabbitMQProducer.sendRPCPayload("TestTableServiceI", "saveTable", params);
+        rabbitMQProducer.sendRPCPayload("TestTableServiceI", "{}");
         return "Updated Successfully";
 
     }

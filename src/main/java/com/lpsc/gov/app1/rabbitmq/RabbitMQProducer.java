@@ -25,14 +25,12 @@ public class RabbitMQProducer {
     @Autowired
     private RPCServiceI rpcService;
 
-    public void sendRPCPayload(String serviceName, String methodName, Map<String, Object> params) {
+    public void sendRPCPayload(String callType, String data) {
         RPCPayload rpcPayload = new RPCPayload();
-        rpcPayload.setServiceName(serviceName);
-        rpcPayload.setMethodName(methodName);
-        rpcPayload.setParams(params);
+        rpcPayload.setCallType(callType);
+        rpcPayload.setPayload(data);
 
-        RPCCalls rpcCall = rpcService.addNewCall(rpcPayload.getServiceName(),
-                rpcPayload.getMethodName(), rpcPayload.getParams().toString());
+        RPCCalls rpcCall = rpcService.addNewCall(callType, data);
         long rpcId = rpcCall.getRpcid();
         rpcPayload.setRequestId(rpcId);
 

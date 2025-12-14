@@ -67,53 +67,55 @@ public class RabbitMQConsumer {
 
     private boolean executionResult(RPCPayload payload) {
 
-        String serviceName = payload.getServiceName();
-        String methodName = payload.getMethodName();
-        Map<String, Object> params = payload.getParams();
-
         boolean result = false;
-        ObjectMapper mapper = new ObjectMapper();
 
-        switch (serviceName) {
-            case "TestTableServiceI":
-                switch (methodName) {
-                    case "saveTable":
-                        System.out.println(params.get("table").getClass().getName());
-                        TestTable table = mapper.convertValue(params.get("table"), TestTable.class);
-                        if (table != null) {
-                            TestTable r = testtableService.saveTable(table);
-                            if (r != null)
-                                result = true;
-                            sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
-                        }
-                        // table.setName(table.getName() + "-INSIDE CONSUMER ");
-                        break;
-
-                    default:
-                        break;
-                }
-                break;
-            case "LibraryService":
-                switch (methodName) {
-                    case "saveLibrary":
-                        System.out.println("Save function called");
-                        Library library = mapper.convertValue(params.get("library"), Library.class);
-
-                        if (library != null) {
-                            Library l = libraryService.saveLibrary(library);
-                            if (l != null)
-                                result = true;
-                            sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-
-            default:
-                break;
-        }
-
+        /*
+         * String serviceName = payload.getServiceName();
+         * String methodName = payload.getMethodName();
+         * Map<String, Object> params = payload.getParams();
+         * 
+         * ObjectMapper mapper = new ObjectMapper();
+         * 
+         * switch (serviceName) {
+         * case "TestTableServiceI":
+         * switch (methodName) {
+         * case "saveTable":
+         * System.out.println(params.get("table").getClass().getName());
+         * TestTable table = mapper.convertValue(params.get("table"), TestTable.class);
+         * if (table != null) {
+         * TestTable r = testtableService.saveTable(table);
+         * if (r != null)
+         * result = true;
+         * sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
+         * }
+         * // table.setName(table.getName() + "-INSIDE CONSUMER ");
+         * break;
+         * 
+         * default:
+         * break;
+         * }
+         * break;
+         * case "LibraryService":
+         * switch (methodName) {
+         * case "saveLibrary":
+         * System.out.println("Save function called");
+         * Library library = mapper.convertValue(params.get("library"), Library.class);
+         * 
+         * if (library != null) {
+         * Library l = libraryService.saveLibrary(library);
+         * if (l != null)
+         * result = true;
+         * sendRPCResult(payload.getRequestId(), payload.getRabbitmqid(), result);
+         * }
+         * break;
+         * default:
+         * break;
+         * }
+         * 
+         * default:
+         * break;
+         * }
+         */
         return result;
     }
 

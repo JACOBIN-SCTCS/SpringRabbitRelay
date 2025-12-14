@@ -7,17 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.pojo.Author;
 import com.lpsc.gov.app1.pojo.Books;
+import com.lpsc.gov.app1.pojo.Library;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class LibraryDTO extends TransferDTO {
 
-    public int id;
-    public String libraryName;
-    public int active;
-    public String migrationState;
-    public List<Books> books;
+    public Library library;
 
     public LibraryDTO() {
         super(GlobalVariables.LIBRARY_DTO);
@@ -49,6 +46,7 @@ public class LibraryDTO extends TransferDTO {
 
         Transaction txn = session.beginTransaction();
 
+        List<Books> books = library.getBooks();
         for (int i = 0; i < books.size(); ++i) {
             Books book = books.get(i);
             Author author = book.getAuthor();
