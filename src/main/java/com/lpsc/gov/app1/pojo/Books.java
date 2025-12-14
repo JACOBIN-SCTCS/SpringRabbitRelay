@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 public class Books {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "bookname")
@@ -33,6 +33,10 @@ public class Books {
 
     @ManyToMany
     private List<Library> libraries;
+
+    public Books() {
+
+    }
 
     public long getId() {
         return id;

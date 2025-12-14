@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 public class RPCCalls {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long rpcid;
 
     @Column(name = "instancename")

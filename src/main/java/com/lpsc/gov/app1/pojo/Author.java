@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class Author {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "name")
@@ -21,6 +21,10 @@ public class Author {
 
     @Column(name = "active")
     private int active;
+
+    public Author() {
+
+    }
 
     public long getId() {
         return id;

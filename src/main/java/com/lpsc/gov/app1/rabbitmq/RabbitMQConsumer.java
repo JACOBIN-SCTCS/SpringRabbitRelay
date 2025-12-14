@@ -97,7 +97,7 @@ public class RabbitMQConsumer {
                 switch (methodName) {
                     case "saveLibrary":
                         System.out.println("Save function called");
-                        Library library = mapper.convertValue(params.get("table"), Library.class);
+                        Library library = mapper.convertValue(params.get("library"), Library.class);
 
                         if (library != null) {
                             Library l = libraryService.saveLibrary(library);

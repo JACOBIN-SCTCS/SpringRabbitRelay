@@ -12,7 +12,7 @@ import jakarta.persistence.Id;
 public class RPCLogs {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     @Column(name = "rpcid")

@@ -12,13 +12,15 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import org.springframework.data.domain.Persistable;
 
 @Entity
 @Table(name = "library_")
 public class Library implements Persistable<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "libraryname")
@@ -32,6 +34,10 @@ public class Library implements Persistable<Long> {
 
     @ManyToMany
     private List<Books> books;
+
+    public Library() {
+        ;
+    }
 
     public Long getId() {
         return id;
