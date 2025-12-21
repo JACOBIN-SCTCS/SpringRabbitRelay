@@ -15,4 +15,5 @@ public class GlobalVariables {
     public static final String INTERNET_ACTION = "INTERNET_PROCESSING";
 
     public static final String LIBRARY_DTO = "LIBRARYDTO";
+    public static final String CERTIFICATE_DTO = "CERTIFICATEDTO";
 }

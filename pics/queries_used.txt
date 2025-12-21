@@ -1,0 +1,13 @@
+insert into mcheck_list_item(id,item,is_active) VALUES(1,'Tolerance',1);
+
+insert into mcheck_list_item_value(id, rank_,value, checklistitem_id) values(1,1,"Acceptable",1);
+insert into mcheck_list_item_value(id, rank_,value, checklistitem_id) values(2,2,"Unacceptable",1);
+insert into mcheck_list_item_value(id, rank_,value, checklistitem_id) values(3,3,"Invalid",1);
+
+insert into mreview(id,category,update_username) VALUES(1,'Test','jacobinsctcs');
+
+insert into mcheck_list_entry(id,active, value,checklistitem,observation) values (1,1,"Acceptable",1,1);
+
+insert into mcertificate(id,active,certificate,review) values(3,1,"asdasdasds",1);
+
+

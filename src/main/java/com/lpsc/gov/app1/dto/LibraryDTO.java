@@ -44,8 +44,6 @@ public class LibraryDTO extends TransferDTO {
     @Override
     public boolean saveData(Session session) {
 
-        Transaction txn = session.beginTransaction();
-
         List<Books> books = library.getBooks();
         for (int i = 0; i < books.size(); ++i) {
             Books book = books.get(i);
@@ -68,8 +66,6 @@ public class LibraryDTO extends TransferDTO {
             }
 
         }
-
-        txn.commit();
 
         return true;
     }
