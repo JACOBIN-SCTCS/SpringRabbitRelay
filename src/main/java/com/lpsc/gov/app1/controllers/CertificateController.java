@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.lpsc.gov.app1.dto.CertificateDTO;
 import com.lpsc.gov.app1.pojo.MCertificate;
+import com.lpsc.gov.app1.rabbitmq.RabbitMQProducer;
 import com.lpsc.gov.app1.services.MCertificateServiceI;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class CertificateController {
 
     @Autowired
     private MCertificateServiceI mCertificateService;
+
+    @Autowired
+    private RabbitMQProducer rabbitMQProducer;
 
     private String getRandomString(int length) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
@@ -45,6 +49,7 @@ public class CertificateController {
         certificateDTO.mCertificate = mCertificate;
 
         String str = certificateDTO.convertToMessage();
+        rabbitMQProducer.sendRPCPayload(certificateDTO.getDTOType(), str);
         return str;
     }
 }

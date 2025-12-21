@@ -1,0 +1,58 @@
+********id = 1 classname =class com.lpsc.gov.app1.pojo.MReview
+Hibernate: select m1_0.id,m1_0.category,m1_0.update_username from mreview m1_0 where m1_0.id=?
+********id = 1 classname =class com.lpsc.gov.app1.pojo.MCheckListItem
+Hibernate: select mli1_0.id,mli1_0.item,mli1_0.is_active,cliv1_0.checklistitem_id,cliv1_0.id,cliv1_0.rank_,cliv1_0.value from mcheck_list_item mli1_0 left join mcheck_list_item_value cliv1_0 on mli1_0.id=cliv1_0.checklistitem_id where mli1_0.id=?
+********id = 1 classname =class com.lpsc.gov.app1.pojo.MCheckListItemValue
+********id = 2 classname =class com.lpsc.gov.app1.pojo.MCheckListItemValue
+********id = 3 classname =class com.lpsc.gov.app1.pojo.MCheckListItemValue
+********id = 1 classname =class com.lpsc.gov.app1.pojo.MCheckListEntry
+********id = 3 classname =class com.lpsc.gov.app1.pojo.MCertificate
+Hibernate: select m1_0.id,m1_0.active,m1_0.certificate,mr1_0.id,mr1_0.category,mr1_0.update_username from mcertificate m1_0 left join mreview mr1_0 on mr1_0.id=m1_0.review where m1_0.id=?
+Hibernate: insert into mreview (category,update_username,id) values (?,?,?)
+Hibernate: insert into mcheck_list_item (item,is_active,id) values (?,?,?)
+Hibernate: insert into mcertificate (active,certificate,review,id) values (?,?,?,?)
+Hibernate: update mcheck_list_entry set active=?,checklistitem=?,observation=?,value=? where id=?
+Hibernate: select mle1_0.id,mle1_0.active,cli1_0.id,cli1_0.item,cli1_0.is_active,cliv1_0.checklistitem_id,cliv1_0.id,cliv1_0.rank_,cliv1_0.value,mr1_0.id,mr1_0.category,mr1_0.update_username,mle1_0.value from mcheck_list_entry mle1_0 left join mcheck_list_item cli1_0 on cli1_0.id=mle1_0.checklistitem left join mcheck_list_item_value cliv1_0 on cli1_0.id=cliv1_0.checklistitem_id left join mreview mr1_0 on mr1_0.id=mle1_0.observation where mle1_0.id=?
+jakarta.persistence.RollbackException: Error while committing the transaction
+        at org.hibernate.internal.ExceptionConverterImpl.convertCommitException(ExceptionConverterImpl.java:67)
+        at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:104)
+        at com.lpsc.gov.app1.dto.DTOHelper.applyState(DTOHelper.java:67)
+        at com.lpsc.gov.app1.rabbitmq.RabbitMQConsumer.executionResult(RabbitMQConsumer.java:71)
+        at com.lpsc.gov.app1.rabbitmq.RabbitMQConsumer.lambda$0(RabbitMQConsumer.java:104)
+        at com.rabbitmq.client.impl.recovery.AutorecoveringChannel$2.handleDelivery(AutorecoveringChannel.java:588)
+        at com.rabbitmq.client.impl.ConsumerDispatcher$5.run(ConsumerDispatcher.java:149)
+        at com.rabbitmq.client.impl.ConsumerWorkService$WorkPoolRunnable.run(ConsumerWorkService.java:111)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: jakarta.persistence.OptimisticLockException: Row was updated or deleted by another transaction (or unsaved-value mapping was incorrect): [com.lpsc.gov.app1.pojo.MCheckListEntry#1]
+        at org.hibernate.internal.ExceptionConverterImpl.wrapStaleStateException(ExceptionConverterImpl.java:209)
+        at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:95)
+        at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:167)
+        at org.hibernate.internal.ExceptionConverterImpl.wrapCommitException(ExceptionConverterImpl.java:81)
+        ... 11 more
+Caused by: org.hibernate.StaleObjectStateException: Row was updated or deleted by another transaction (or unsaved-value mapping was incorrect): [com.lpsc.gov.app1.pojo.MCheckListEntry#1]
+        at org.hibernate.engine.jdbc.mutation.internal.ModelMutationHelper.identifiedResultsCheck(ModelMutationHelper.java:75)
+        at org.hibernate.persister.entity.mutation.UpdateCoordinatorStandard.lambda$doStaticUpdate$9(UpdateCoordinatorStandard.java:785)
+        at org.hibernate.engine.jdbc.mutation.internal.ModelMutationHelper.checkResults(ModelMutationHelper.java:50)
+        at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.performNonBatchedMutation(AbstractMutationExecutor.java:141)
+        at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorSingleNonBatched.performNonBatchedOperations(MutationExecutorSingleNonBatched.java:55)
+        at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.execute(AbstractMutationExecutor.java:55)
+        at org.hibernate.persister.entity.mutation.UpdateCoordinatorStandard.doStaticUpdate(UpdateCoordinatorStandard.java:781)
+        at org.hibernate.persister.entity.mutation.UpdateCoordinatorStandard.performUpdate(UpdateCoordinatorStandard.java:328)
+        at org.hibernate.persister.entity.mutation.UpdateCoordinatorStandard.update(UpdateCoordinatorStandard.java:245)
+        at org.hibernate.action.internal.EntityUpdateAction.execute(EntityUpdateAction.java:169)
+        at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:644)
+        at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:511)
+        at org.hibernate.event.internal.AbstractFlushingEventListener.performExecutions(AbstractFlushingEventListener.java:414)
+        at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:41)
+        at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127)
+        at org.hibernate.internal.SessionImpl.doFlush(SessionImpl.java:1429)
+        at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:491)
+        at org.hibernate.internal.SessionImpl.flushBeforeTransactionCompletion(SessionImpl.java:2354)
+        at org.hibernate.internal.SessionImpl.beforeTransactionCompletion(SessionImpl.java:1978)
+        at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.beforeTransactionCompletion(JdbcCoordinatorImpl.java:439)
+        at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl.beforeCompletionCallback(JdbcResourceLocalTransactionCoordinatorImpl.java:169)
+        at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:267)
+        at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101)
+        ... 9 more
