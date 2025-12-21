@@ -2,6 +2,7 @@ package com.lpsc.gov.app1.controllers;
 
 import java.util.Random;
 
+import com.lpsc.gov.app1.dto.CertificateDTO;
 import com.lpsc.gov.app1.pojo.MCertificate;
 import com.lpsc.gov.app1.services.MCertificateServiceI;
 
@@ -35,5 +36,15 @@ public class CertificateController {
 
         mCertificateService.saveMCertificate(mCertificate);
         return "populated a certificate";
+    }
+
+    @GetMapping("/migrateCertificate")
+    public String migrateCertificate() {
+        MCertificate mCertificate = mCertificateService.getMCertificateById(3);
+        CertificateDTO certificateDTO = new CertificateDTO();
+        certificateDTO.mCertificate = mCertificate;
+
+        String str = certificateDTO.convertToMessage();
+        return str;
     }
 }

@@ -4,4 +4,6 @@ import com.lpsc.gov.app1.pojo.MCertificate;
 
 public interface MCertificateServiceI {
     MCertificate saveMCertificate(MCertificate mCertificate);
+
+    MCertificate getMCertificateById(long id);
 }

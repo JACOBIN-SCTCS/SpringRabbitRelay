@@ -17,4 +17,9 @@ public class MCertificateService implements MCertificateServiceI {
         return mcertificateRepo.save(mCertificate);
     }
 
+    @Override
+    public MCertificate getMCertificateById(long id) {
+        return mcertificateRepo.findById(id).get();
+    }
+
 }

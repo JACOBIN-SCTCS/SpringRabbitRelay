@@ -9,6 +9,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.Column;
@@ -31,6 +33,7 @@ public class MCheckListEntry {
 
     @ManyToOne
     @JoinColumn(name = "observation")
+    @JsonIgnore
     private MReview mReview;
 
     @Column(name = "value")

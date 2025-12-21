@@ -8,6 +8,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -20,6 +22,7 @@ public class MCheckListItemValue {
     @GeneratedValue(generator = "customidgenerator")
     private long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "checklistitem_id")
     private MCheckListItem mCheckListItem;

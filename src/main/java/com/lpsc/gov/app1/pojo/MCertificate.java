@@ -55,4 +55,12 @@ public class MCertificate {
     public void setCertString(String certString) {
         this.certString = certString;
     }
+
+    public MReview getmReview() {
+        return mReview;
+    }
+
+    public void setmReview(MReview mReview) {
+        this.mReview = mReview;
+    }
 }
