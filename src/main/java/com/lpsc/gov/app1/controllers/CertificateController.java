@@ -2,7 +2,9 @@ package com.lpsc.gov.app1.controllers;
 
 import java.util.Random;
 
+import com.lpsc.gov.app1.dto.ADTO;
 import com.lpsc.gov.app1.dto.CertificateDTO;
+import com.lpsc.gov.app1.pojo.A;
 import com.lpsc.gov.app1.pojo.MCertificate;
 import com.lpsc.gov.app1.rabbitmq.RabbitMQProducer;
 import com.lpsc.gov.app1.services.MCertificateServiceI;
@@ -52,4 +54,16 @@ public class CertificateController {
         rabbitMQProducer.sendRPCPayload(certificateDTO.getDTOType(), str);
         return str;
     }
+
+    @GetMapping("/migrateArecord")
+    public String migrateARecord() {
+
+        A a = mCertificateService.getAcertificate(1);
+        ADTO adto = new ADTO();
+        adto.a = a;
+        String str = adto.convertToMessage();
+        rabbitMQProducer.sendRPCPayload(adto.getDTOType(), str);
+        return str;
+    }
+
 }

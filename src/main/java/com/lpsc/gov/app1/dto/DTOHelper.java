@@ -44,6 +44,10 @@ public class DTOHelper {
                 case GlobalVariables.CERTIFICATE_DTO:
                     transferDTO = mapper.readValue(message, CertificateDTO.class);
                     break;
+                case GlobalVariables.A_DTO:
+                    transferDTO = mapper.readValue(message, ADTO.class);
+                    break;
+
             }
 
         } catch (Exception e) {
