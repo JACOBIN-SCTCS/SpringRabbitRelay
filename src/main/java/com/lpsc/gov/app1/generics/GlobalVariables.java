@@ -16,4 +16,5 @@ public class GlobalVariables {
 
     public static final String LIBRARY_DTO = "LIBRARYDTO";
     public static final String FILETRANSFER_DTO = "FILETRANSFERDTO";
+    public static final String TEST_DTO = "TESTDTO";
 }

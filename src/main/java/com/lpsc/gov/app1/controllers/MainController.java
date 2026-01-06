@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lpsc.gov.app1.dto.FileTransferDTO;
+import com.lpsc.gov.app1.encryption.AESHelper;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.generics.RPCPayload;
 import com.lpsc.gov.app1.pojo.RPCCalls;
@@ -138,6 +139,35 @@ public class MainController {
 
         rabbitMQProducer.sendRPCPayload(fileTransferDTO.getDTOType(), fileTransferDTO);
 
+        return "FileTransferDTO succeeded";
+
+    }
+
+    @GetMapping("/encryptiontest")
+    public String testEncryption() {
+
+        String messagetoEncrypt = " Mobile phone";
+        String key = "ZXSId27TQqtAP9jgZ5aP5Q==";
+        // String key =
+        // "d2193f45f70dcaac1876f88a205acbeb710c6163893eba79ac0ea89964c473ec";
+        String encryptedMessage = "";
+        try {
+            encryptedMessage = AESHelper.encrypt(messagetoEncrypt, key);
+
+            System.out.print("_____________________");
+            System.out.println(encryptedMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            String decryptedmessage = AESHelper.decrypt(encryptedMessage, key);
+
+            System.out.println("***********************");
+            System.out.println(decryptedmessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "FileTransferDTO succeeded";
 
     }
