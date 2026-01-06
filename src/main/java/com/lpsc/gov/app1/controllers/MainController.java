@@ -1,6 +1,8 @@
 package com.lpsc.gov.app1.controllers;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lpsc.gov.app1.dto.FileTransferDTO;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.generics.RPCPayload;
 import com.lpsc.gov.app1.pojo.RPCCalls;
@@ -114,6 +117,29 @@ public class MainController {
             e.printStackTrace();
         }
         return "Pushed task to queue";
+    }
+
+    @GetMapping("/transferfile")
+    public String transferFile() {
+
+        FileTransferDTO fileTransferDTO = new FileTransferDTO();
+        byte[] array = null;
+
+        try {
+            array = Files.readAllBytes(Paths.get("C:\\Users\\Test\\dddd\\2512.24601.pdf"));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        fileTransferDTO.setFileBytes(array);
+        fileTransferDTO.setFileName("2512.24601.pdf");
+        String messagePayload = fileTransferDTO.convertToMessage();
+
+        rabbitMQProducer.sendRPCPayload(fileTransferDTO.getDTOType(), fileTransferDTO);
+
+        return "FileTransferDTO succeeded";
+
     }
 
 }
