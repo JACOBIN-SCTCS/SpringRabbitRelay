@@ -74,4 +74,9 @@ public class LibraryDTO extends TransferDTO {
         return true;
     }
 
+    @Override
+    public String getDBMessage() {
+        return this.convertToMessage();
+    }
+
 }

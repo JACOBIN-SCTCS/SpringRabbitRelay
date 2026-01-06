@@ -156,7 +156,7 @@ public class LibraryController {
         Map<String, Object> params = new HashMap<>();
         params.put("library", jsonString);
 
-        rabbitMQProducer.sendRPCPayload("LibraryService", "{}");
+        rabbitMQProducer.sendRPCPayload("LibraryService", null);
         return "Migration to library successfully called";
     }
 
@@ -241,7 +241,7 @@ public class LibraryController {
 
         String messagePayload = libraryDTO.convertToMessage();
 
-        rabbitMQProducer.sendRPCPayload(libraryDTO.getDTOType(), messagePayload);
+        rabbitMQProducer.sendRPCPayload(libraryDTO.getDTOType(), libraryDTO);
 
         return "LibMQTestPage";
     }

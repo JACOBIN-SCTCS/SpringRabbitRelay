@@ -19,6 +19,8 @@ public abstract class TransferDTO {
 
     public abstract String convertToMessage();
 
+    public abstract String getDBMessage();
+
     public abstract String testmethod();
 
     public abstract boolean saveData(Session session);

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lpsc.gov.app1.dto.TransferDTO;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.generics.RPCPayload;
 import com.lpsc.gov.app1.pojo.RPCCalls;
@@ -25,12 +26,16 @@ public class RabbitMQProducer {
     @Autowired
     private RPCServiceI rpcService;
 
-    public void sendRPCPayload(String callType, String data) {
+    public void sendRPCPayload(String callType, TransferDTO transferDTO) {
         RPCPayload rpcPayload = new RPCPayload();
         rpcPayload.setCallType(callType);
-        rpcPayload.setPayload(data);
 
-        RPCCalls rpcCall = rpcService.addNewCall(callType, data);
+        String payload = transferDTO.convertToMessage();
+        rpcPayload.setPayload(payload);
+
+        String DBMessage = transferDTO.getDBMessage();
+
+        RPCCalls rpcCall = rpcService.addNewCall(callType, DBMessage);
         long rpcId = rpcCall.getRpcid();
         rpcPayload.setRequestId(rpcId);
 

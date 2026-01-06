@@ -99,7 +99,7 @@ public class MainController {
         Hibernate.initialize(tableEntry);
         params.put("table", tableEntry);
 
-        rabbitMQProducer.sendRPCPayload("TestTableServiceI", "{}");
+        rabbitMQProducer.sendRPCPayload("TestTableServiceI", null);
         return "Updated Successfully";
 
     }
