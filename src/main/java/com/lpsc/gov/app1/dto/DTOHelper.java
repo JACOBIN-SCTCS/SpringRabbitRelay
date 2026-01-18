@@ -1,7 +1,10 @@
 package com.lpsc.gov.app1.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 
 import org.hibernate.Session;
@@ -33,14 +36,18 @@ public class DTOHelper {
         String type = getType(message);
         TransferDTO transferDTO = null;
         ObjectMapper mapper = new ObjectMapper();
-
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.setVisibility(
+                VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
         try {
 
             switch (type) {
                 case GlobalVariables.LIBRARY_DTO:
                     transferDTO = mapper.readValue(message, LibraryDTO.class);
                     break;
-
+                case GlobalVariables.FILETRANSFER_DTO:
+                    transferDTO = mapper.readValue(message, FileTransferDTO.class);
+                    break;
             }
 
         } catch (Exception e) {
@@ -64,7 +71,7 @@ public class DTOHelper {
             if (session != null)
                 session.close();
         }
-       
+
         return result;
 
     }

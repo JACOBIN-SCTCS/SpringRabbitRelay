@@ -1,5 +1,9 @@
 package com.lpsc.gov.app1.dto;
 
+import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 
@@ -40,7 +44,17 @@ public class FileTransferDTO extends TransferDTO {
     @Override
     public boolean saveData(Session session) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveData'");
+        //
+        String path = Paths.get(GlobalVariables.FILE_LOCATION, this.fileName).toString();
+        try {
+            FileOutputStream fos = new FileOutputStream(path);
+            fos.write(this.fileBytes);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+
     }
 
     public byte[] getFileBytes() {

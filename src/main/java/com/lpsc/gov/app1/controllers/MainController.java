@@ -127,7 +127,7 @@ public class MainController {
         byte[] array = null;
 
         try {
-            array = Files.readAllBytes(Paths.get("C:\\Users\\Test\\dddd\\2512.24601.pdf"));
+            array = Files.readAllBytes(Paths.get("D:\\code\\files\\intranet\\2512.24601.pdf"));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
