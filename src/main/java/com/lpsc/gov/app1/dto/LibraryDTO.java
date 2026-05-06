@@ -1,8 +1,8 @@
 package com.lpsc.gov.app1.dto;
 
 import java.util.List;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lpsc.gov.app1.generics.GlobalVariables;
 import com.lpsc.gov.app1.pojo.Author;
@@ -14,7 +14,7 @@ import org.hibernate.Transaction;
 
 public class LibraryDTO extends TransferDTO {
 
-    public Library library;
+    private Library library;
 
     public LibraryDTO() {
         super(GlobalVariables.LIBRARY_DTO);
@@ -46,9 +46,9 @@ public class LibraryDTO extends TransferDTO {
 
         Transaction txn = session.beginTransaction();
 
-        List<Books> books = library.getBooks();
-        for (int i = 0; i < books.size(); ++i) {
-            Books book = books.get(i);
+        Set<Books> books = library.getBooks();
+        for (Books book : books) {
+            // Books book = books.get(i);
             Author author = book.getAuthor();
             boolean authorExists = false;
 
@@ -76,7 +76,16 @@ public class LibraryDTO extends TransferDTO {
 
     @Override
     public String getDBMessage() {
-        return this.convertToMessage();
+        // return this.convertToMessage();
+        return "";
+    }
+
+    public Library getLibrary() {
+        return library;
+    }
+
+    public void setLibrary(Library library) {
+        this.library = library;
     }
 
 }

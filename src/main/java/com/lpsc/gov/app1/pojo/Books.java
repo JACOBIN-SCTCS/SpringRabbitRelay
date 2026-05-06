@@ -1,6 +1,7 @@
 package com.lpsc.gov.app1.pojo;
 
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,12 +14,21 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import org.hibernate.annotations.GenericGenerator;
+
 @Entity
 @Table(name = "books")
 public class Books {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "customidgenerator")
+    @GenericGenerator(name = "customidgenerator", strategy = "com.lpsc.gov.app1.generators.CustomIdGenerator")
     private long id;
 
     @Column(name = "bookname")
@@ -31,8 +41,9 @@ public class Books {
     @JoinColumn(name = "author_id", nullable = true)
     private Author author;
 
-    @ManyToMany
-    private List<Library> libraries;
+    @ManyToMany(mappedBy = "books")
+    @JsonBackReference
+    private Set<Library> libraries;
 
     public Books() {
 
@@ -70,11 +81,11 @@ public class Books {
         this.author = author;
     }
 
-    public List<Library> getLibraries() {
+    public Set<Library> getLibraries() {
         return libraries;
     }
 
-    public void setLibraries(List<Library> libraries) {
+    public void setLibraries(Set<Library> libraries) {
         this.libraries = libraries;
     }
 

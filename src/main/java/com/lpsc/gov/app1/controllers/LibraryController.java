@@ -3,9 +3,13 @@ package com.lpsc.gov.app1.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+
+import jakarta.persistence.ElementCollection;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,7 +78,7 @@ public class LibraryController {
 
         List<Author> authors = new ArrayList<Author>();
 
-        List<Books> books = new ArrayList<>();
+        Set<Books> books = new HashSet<>();
 
         for (int i = 0; i < author_count; ++i) {
             Author author = new Author();
@@ -173,13 +177,13 @@ public class LibraryController {
         author.setName("James");
         author.setId(3);
 
-        List<Books> books = new ArrayList<Books>();
+        Set<Books> books = new HashSet<>();
         Books book = new Books();
         book.setBookName("Test Title");
         book.setActive(1);
         book.setId(1);
         book.setAuthor(author);
-        book.setLibraries(null);
+        // book.setLibraries(null);
         books.add(book);
 
         Books book2 = new Books();
@@ -187,7 +191,7 @@ public class LibraryController {
         book2.setActive(1);
         book2.setId(2);
         book2.setAuthor(author);
-        book2.setLibraries(null);
+        // book2.setLibraries(null);
         books.add(book2);
 
         Library library = new Library();
@@ -196,7 +200,7 @@ public class LibraryController {
         library.setId(1l);
         library.setMigrationState(GlobalVariables.INTRANET_COMPLETED);
 
-        library.setBooks(books);
+        // library.setBooks(books);
 
         List<Library> libraries = new ArrayList<>();
         libraries.add(library);
@@ -235,15 +239,59 @@ public class LibraryController {
     @RequestMapping(value = "/libmqtest", method = RequestMethod.GET)
     public @ResponseBody String libmqtest() {
 
-        Library library = libraryService.getLibraryById(1);
-        LibraryDTO libraryDTO = new LibraryDTO();
-        libraryDTO.library = library;
+        Library library = libraryService.getLibraryById(5);
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = "{}";
+        try {
+            jsonString = mapper.writeValueAsString(library);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        String messagePayload = libraryDTO.convertToMessage();
+        LibraryDTO libraryDTO = new LibraryDTO();
+        libraryDTO.setLibrary(library);
+        // libraryDTO.library = library;
+        //String messagePayload = libraryDTO.convertToMessage();
+        try {
+            jsonString = mapper.writeValueAsString(libraryDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         rabbitMQProducer.sendRPCPayload(libraryDTO.getDTOType(), libraryDTO);
 
-        return "LibMQTestPage";
+        return jsonString;
+
+    }
+
+    @RequestMapping(value = "/libmqtest2", method = RequestMethod.GET)
+    public @ResponseBody String libmqtest2() {
+        Author author = authorService.findAuthorById(5);
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = "{}";
+        try {
+            jsonString = mapper.writeValueAsString(author);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jsonString;
+
+    }
+
+    @RequestMapping(value = "/libmqtest3", method = RequestMethod.GET)
+    public @ResponseBody String libmqtest3() {
+        Books book = bookService.findBookById(4);
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = "{}";
+        try {
+            jsonString = mapper.writeValueAsString(book);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jsonString;
+
     }
 
 }
