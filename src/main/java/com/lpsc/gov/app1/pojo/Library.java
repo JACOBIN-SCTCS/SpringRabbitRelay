@@ -25,6 +25,7 @@ import org.springframework.data.domain.Persistable;
 
 @Entity
 @Table(name = "library_")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Library {
 
     @Id
@@ -45,7 +46,7 @@ public class Library {
     @ManyToMany
     @JoinTable(name = "library__books", joinColumns = { @JoinColumn(name = "library_id") }, inverseJoinColumns = {
             @JoinColumn(name = "books_id") })
-    @JsonManagedReference
+    // @JsonManagedReference
     private Set<Books> books;
 
     public Library() {

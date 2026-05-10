@@ -23,6 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "books")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Books {
 
     @Id
@@ -42,7 +43,7 @@ public class Books {
     private Author author;
 
     @ManyToMany(mappedBy = "books")
-    @JsonBackReference
+    // @JsonBackReference
     private Set<Library> libraries;
 
     public Books() {

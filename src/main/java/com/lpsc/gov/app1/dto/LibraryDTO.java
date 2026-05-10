@@ -46,28 +46,32 @@ public class LibraryDTO extends TransferDTO {
 
         Transaction txn = session.beginTransaction();
 
-        Set<Books> books = library.getBooks();
-        for (Books book : books) {
-            // Books book = books.get(i);
-            Author author = book.getAuthor();
-            boolean authorExists = false;
+        /*
+         * Set<Books> books = library.getBooks();
+         * for (Books book : books) {
+         * // Books book = books.get(i);
+         * Author author = book.getAuthor();
+         * boolean authorExists = false;
+         * 
+         * authorExists = (session.get(Author.class, author.getId()) != null);
+         * if (authorExists) {
+         * session.merge(author);
+         * } else {
+         * session.save(author);
+         * }
+         * 
+         * boolean bookExists = false;
+         * bookExists = (session.get(Books.class, book.getId()) != null);
+         * if (bookExists) {
+         * session.merge(book);
+         * } else {
+         * session.save(book);
+         * }
+         * 
+         * }
+         */
 
-            authorExists = (session.get(Author.class, author.getId()) != null);
-            if (authorExists) {
-                session.merge(author);
-            } else {
-                session.save(author);
-            }
-
-            boolean bookExists = false;
-            bookExists = (session.get(Books.class, book.getId()) != null);
-            if (bookExists) {
-                session.merge(book);
-            } else {
-                session.save(book);
-            }
-
-        }
+        session.saveOrUpdate(library);
 
         txn.commit();
 
